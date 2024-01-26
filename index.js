@@ -23,18 +23,23 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/create', async (req, res) => {
-    const { name, status } = req.body
+    const { name, status, desc, dueTask } = req.body
 
-    const task = await Task.create({ name, status })
+    try {
+        const task = await Task.create({ name, status, desc, dueTask })
 
-    if (!task) {
-        return res.status(400).json({ msg: 'No Task can be created' })
+        if (!task) {
+            return res.status(400).json({ msg: 'No Task can be created' })
+        }
+
+        res.status(200).json({
+            success: true,
+            data: task
+        })
+    } catch (error) {
+
+        return res.status(400).json({ msg: error.message })
     }
-
-    res.status(200).json({
-        success: true,
-        data: task
-    })
 })
 
 app.delete('/:id', async (req, res) => {
