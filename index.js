@@ -67,7 +67,7 @@ app.delete('/:id', async (req, res) => {
 app.put('/update/:id', async (req, res) => {
     try {
         const { id } = req.params
-        const { name, status } = req.body
+        const { name, status, desc, dueTask } = req.body
         if (!mongoose.Types.ObjectId.isValid(id))
             return res.status(404).json({
                 msg: `No task with id :${id}`
@@ -75,7 +75,9 @@ app.put('/update/:id', async (req, res) => {
 
         const task = await Task.findByIdAndUpdate(id, {
             name,
-            status
+            status,
+            desc,
+            dueTask
         })
 
         if (!task) {
@@ -86,6 +88,28 @@ app.put('/update/:id', async (req, res) => {
             success: true,
             message: 'Successfully Updated',
             data: task
+        })
+    } catch (error) {
+        return res.status(400).json({ msg: 'Something went wrong' })
+    }
+})
+
+app.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(404).json({
+                msg: `No task with id :${id}`
+            });
+        const task = await Task.findById(id)
+
+        if (!task) {
+            return res.status(400).json({ msg: 'No Task found by this id' })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: task
         })
     } catch (error) {
         return res.status(400).json({ msg: 'Something went wrong' })
