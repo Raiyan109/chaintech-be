@@ -64,7 +64,7 @@ app.delete('/:id', async (req, res) => {
     }
 })
 
-app.put('/update/:id', async (req, res) => {
+app.patch('/update/:id', async (req, res) => {
     try {
         const { id } = req.params
         const { name, status, desc, dueTask } = req.body
@@ -73,12 +73,13 @@ app.put('/update/:id', async (req, res) => {
                 msg: `No task with id :${id}`
             });
 
-        const task = await Task.findByIdAndUpdate(id, {
-            name,
-            status,
-            desc,
-            dueTask
-        })
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (status) updateFields.status = status;
+        if (desc) updateFields.desc = desc;
+        if (dueTask) updateFields.dueTask = dueTask;
+
+        const task = await Task.findByIdAndUpdate(id, updateFields, { new: true });
 
         if (!task) {
             return res.status(400).json({ msg: 'No Task can be updated' })

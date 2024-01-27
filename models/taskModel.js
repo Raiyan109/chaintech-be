@@ -12,7 +12,10 @@ const taskSchema = new Schema({
         default: ""
     },
     desc: String,
-    dueTask: String
+    dueTask: {
+        type: Date,
+        default: Date.now
+    }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Task', taskSchema)
